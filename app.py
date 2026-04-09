@@ -48,6 +48,13 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("2. Digitale Filter")
 apply_notch = st.sidebar.checkbox("🟢 50Hz Notch-Filter (Gegen Netzbrummen)", value=False)
 apply_bandpass = st.sidebar.checkbox("🔵 Bandpassfilter 0.5-40Hz (Gegen Basislinienwandern & EMG)", value=False)
+st.sidebar.markdown("---")
+st.sidebar.subheader("3. Ansicht (Visualisierung)")
+
+# 添加一个滑动条，默认显示 3.0 秒（通常刚好是 4 个波）
+# Add a slider, default to 3.0 seconds (typically exactly 4 cardiac cycles)
+# Fügen Sie einen Schieberegler hinzu, Standardwert 3,0 Sekunden (entspricht normalerweise 4 Herzzyklen)
+view_seconds = st.sidebar.slider("Zeitfenster (Sekunden)", min_value=1.0, max_value=5.5, value=3.0, step=0.5)
 
 # ==========================================
 # 3. 核心后端逻辑 (数据读取与处理)
@@ -105,11 +112,26 @@ ax.grid(which='minor', color='#ffcccc', linestyle='-', linewidth=0.5, alpha=0.5)
 
 ax.set_xlabel("Zeitachse (Abtastwerte | 1 großes Kästchen = 0,2s)", fontsize=10)
 ax.set_ylabel("Spannung (mV)", fontsize=10)
-# 根据是否滤波动态改变标题
-# Dynamically change title based on filtering status
-# Titel dynamisch je nach Filterstatus ändern
+
+# 计算需要显示的采样点数量：秒数 * 采样率 (360Hz)
+# Calculate the number of sample points to display: seconds * sampling rate (360Hz)
+# Berechnen Sie die Anzahl der anzuzeigenden Abtastpunkte: Sekunden * Abtastrate (360Hz)
+
+# 例如 3.0 秒 * 360 = 1080 个点
+# Example: 3.0 seconds * 360 = 1080 points
+# Beispiel: 3,0 Sekunden * 360 = 1080 Punkte
+display_samples = int(view_seconds * fs)
+
+# 限制 X 轴的显示范围（只看前 display_samples 个点）
+# Limit the X-axis display range (only show the first display_samples points)
+# Begrenzen Sie den X-Achsen-Anzeigebereich (nur die ersten display_samples Punkte anzeigen)
+ax.set_xlim([0, display_samples])
+
+# 根据当前显示的长度，动态调整标题
+# Dynamically adjust the title based on the current display length
+# Titel dynamisch an die aktuelle Anzeigelänge anpassen
 status_text = "Gefiltert" if (apply_notch or apply_bandpass) else "Originalsignal (Ungefiltert)"
-ax.set_title(f"Status: {status_text}", fontsize=12)
+ax.set_title(f"Status: {status_text} | Ansicht: {view_seconds}s", fontsize=12)
    
 # 将画好的图表推送到 Streamlit 网页中
 # Push the drawn chart to the Streamlit web page
