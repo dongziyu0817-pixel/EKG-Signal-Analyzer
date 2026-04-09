@@ -67,11 +67,15 @@ view_seconds = st.sidebar.slider("Zeitfenster (Sekunden)", min_value=1.0, max_va
 @st.cache_data
 def load_data(record_id):
     record = wfdb.rdrecord(record_id, pn_dir='mitdb', sampto=2000)
-    return record.p_signal[:, 0]
+    # 同时返回信号和注释信息
+    # Return both the signal and annotation information
+    # Gibt sowohl das Signal als auch die Anmerkungsinformationen zurück
+    return record.p_signal[:, 0], record.comments
 
-raw_signal = load_data(record_name)
-fs = 360.0  # 采样率 / Sampling rate / Abtastrate
-
+# 接收两个返回值
+# Receive two return values
+# Zwei Rückgabewerte empfangen
+raw_signal, comments = load_data(record_name)
 # 信号处理管道 (Signal Processing Pipeline)
 # Signal processing pipeline
 # Signalverarbeitungs-Pipeline
@@ -95,6 +99,33 @@ if apply_bandpass:
 # 4. Medizinische Datenvisualisierung (UI-Rendering)
 # ==========================================
 st.subheader(f"📊 EKG-Signal: Datensatz {record_name}")
+
+# ==========================================
+# 4. 医疗级数据可视化 (UI 渲染)
+# 4. Medical-grade data visualization (UI rendering)
+# 4. Medizinische Datenvisualisierung (UI-Rendering)
+# ==========================================
+st.subheader(f"📊 EKG-Signal: Datensatz {record_name}")
+
+# [新插入的代码]：可折叠的临床信息面板
+# [Newly inserted code]: Collapsible clinical information panel
+# [Neu eingefügter Code]: Einklappbares klinisches Informationspanel
+with st.expander("📋 Klinische Informationen (病患临床背景)"):
+    if comments:
+        # 提取第一行基本信息
+        # Extract basic information from the first line
+        # Grundlegende Informationen aus der ersten Zeile extrahieren
+        st.write(f"**Basisinfo:** {comments[0]}")
+        # 寻找包含药物信息的行
+        # Look for lines containing medication information
+        # Nach Zeilen mit Medikamenteninformationen suchen
+        meds = [c for c in comments if "Medications" in c]
+        if meds:
+            st.warning(f"💊 **{meds[0]}**")
+        else:
+            st.info("Keine spezifischen Medikamenten-Infos vorhanden.")
+    else:
+        st.text("Keine klinischen Kommentare gefunden.")
 
 fig, ax = plt.subplots(figsize=(15, 5))
 ax.plot(processed_signal, color='#d62728', linewidth=1.2, zorder=3)
