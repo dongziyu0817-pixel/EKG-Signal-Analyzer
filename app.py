@@ -116,7 +116,8 @@ with st.expander("📋 Klinische Informationen (病患临床背景)"):
             
             # 如果有第三行，也可以一并展示出来/check the thrid line
             if len(comments) > 2:
-                st.info(f"📝 **Zusatzinfo:** {comments[2]}")
+                full_zusatzinfo = " ".join(comments[2:])
+                st.info(f"📝 **Zusatzinfo:** {full_zusatzinfo}")
         else:
             st.info("Keine spezifischen Medikamenten-Infos vorhanden.")
     else:
