@@ -76,6 +76,8 @@ def load_data(record_id):
 # Receive two return values
 # Zwei Rückgabewerte empfangen
 raw_signal, comments = load_data(record_name)
+
+fs = 360.0
 # 信号处理管道 (Signal Processing Pipeline)
 # Signal processing pipeline
 # Signalverarbeitungs-Pipeline
