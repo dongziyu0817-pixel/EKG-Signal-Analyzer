@@ -21,15 +21,26 @@ st.markdown("Entwickelt für die Medizintechnik. Dieses Tool demonstriert die Ka
 # ==========================================
 st.sidebar.header("⚙️ Parameter-Einstellungen")
 
+
+# 完整的 MIT-BIH 记录编号列表 (共 48 个)
+mitdb_records = [
+    '100', '101', '102', '103', '104', '105', '106', '107', '108', '109',
+    '111', '112', '113', '114', '115', '116', '117', '118', '119', '121',
+    '122', '123', '124', '200', '201', '202', '203', '205', '207', '208',
+    '209', '210', '212', '213', '214', '215', '217', '219', '220', '221',
+    '222', '223', '228', '230', '231', '232', '233', '234'
+]
+
 # 选择患者记录
 # Select patient record
 # Patienten-Datensatz auswählen
+# index=5 会让网页默认选中 '105' 号病人，方便直接展示带噪声的脏数据
 record_name = st.sidebar.selectbox(
     "1. Patienten-Datensatz auswählen (MIT-BIH):", 
-    ['105', '100', '119'], 
-    help="105 hat starkes Rauschen. 100 ist relativ normal."
+    mitdb_records,
+    index=5, 
+    help="Datensätze im 100er-Bereich sind Routine-EKGs, 200er-Bereich enthält komplexe Arrhythmien."
 )
-
 # 滤波器开关
 # Filter switches
 # Filter-Schalter
