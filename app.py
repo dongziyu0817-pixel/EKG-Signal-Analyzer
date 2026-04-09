@@ -102,33 +102,26 @@ if apply_bandpass:
 # ==========================================
 st.subheader(f"📊 EKG-Signal: Datensatz {record_name}")
 
-# ==========================================
-# 4. 医疗级数据可视化 (UI 渲染)
-# 4. Medical-grade data visualization (UI rendering)
-# 4. Medizinische Datenvisualisierung (UI-Rendering)
-# ==========================================
-st.subheader(f"📊 EKG-Signal: Datensatz {record_name}")
-
 # [新插入的代码]：可折叠的临床信息面板
 # [Newly inserted code]: Collapsible clinical information panel
 # [Neu eingefügter Code]: Einklappbares klinisches Informationspanel
 with st.expander("📋 Klinische Informationen (病患临床背景)"):
     if comments:
-        # 提取第一行基本信息
-        # Extract basic information from the first line
-        # Grundlegende Informationen aus der ersten Zeile extrahieren
+        # 第一行是基础信息/The first line is the basic information
         st.write(f"**Basisinfo:** {comments[0]}")
-        # 寻找包含药物信息的行
-        # Look for lines containing medication information
-        # Nach Zeilen mit Medikamenteninformationen suchen
-        meds = [c for c in comments if "Medications" in c]
-        if meds:
-            st.warning(f"💊 **{meds[0]}**")
+        
+        # 有没有第二行！if there is the second line or not
+        if len(comments) > 1:
+            st.warning(f"💊 **Medikation / Historie:** {comments[1]}")
+            
+            # 如果有第三行，也可以一并展示出来/check the thrid line
+            if len(comments) > 2:
+                st.info(f"📝 **Zusatzinfo:** {comments[2]}")
         else:
             st.info("Keine spezifischen Medikamenten-Infos vorhanden.")
     else:
         st.text("Keine klinischen Kommentare gefunden.")
-
+        
 fig, ax = plt.subplots(figsize=(15, 5))
 ax.plot(processed_signal, color='#d62728', linewidth=1.2, zorder=3)
 
