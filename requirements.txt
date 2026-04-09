@@ -1,0 +1,4 @@
+streamlit
+wfdb
+scipy
+matplotlib
